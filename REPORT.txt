@@ -7,7 +7,12 @@ We used the MAP_ANONYMOUS flag instead of a file descriptor, and used the same l
 
 - What performance differences did you see?
 
+For populate.cpp:
+Performance difference wasn't too large, but still better than random noise.
+The demand paging test ran at about 10.5 seconds while the map populate test ran at about 10.3 seconds.
 
+For huge.cpp:
+Performance difference was pretty large, with about 0.003 seconds for 4kb pages and about 0.0006 seconds for 2MB pages.
 
 
 - If you have time / interest, lets try to look at what exactly caused these

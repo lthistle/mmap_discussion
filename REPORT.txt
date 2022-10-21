@@ -1,6 +1,14 @@
 - How did you design your benchmarks?
+For populate.cpp:
+We used `dd if=/dev/random of=./data` to genereate ~65MB worth of random data. Our benchmarking-loop then proceeded to load a single byte from each page in this data file.
+
+For huge.cpp:
+We used the MAP_ANONYMOUS flag instead of a file descriptor, and used the same loop as above, loading a single byte from each 4kb of the file.
 
 - What performance differences did you see?
+
+
+
 
 - If you have time / interest, lets try to look at what exactly caused these
 performance differences above. Our hardware has special performance counters

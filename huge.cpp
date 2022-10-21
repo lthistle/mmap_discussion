@@ -18,12 +18,13 @@ int main(int argc, char** argv){
     // What is the flag called on Linux?
 
     void* addr;
+    int size = 0x400000;
 
     // easy / hacky way to pass cmdline args
     if (argc == 1){
         // use 4k page size if no additional args
         std::cout << "Page size: 4k\n";
-        addr = mmap(NULL, LARGE, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+        addr = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
     }
     else{
         // use 2MB page size if additional args
@@ -38,7 +39,7 @@ int main(int argc, char** argv){
         // If you want to learn more about this special setup, check out 
         // https://docs.kernel.org/admin-guide/mm/hugetlbpage.html
         std::cout << "Page size: 2MB\n";
-        addr = mmap(NULL, LARGE, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS | MAP_HUGE_2MB, -1, 0);
+        addr = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
     }
 
     // Always check your return values!
@@ -47,6 +48,10 @@ int main(int argc, char** argv){
     }
 
     // TODO: run benchmark here
+
+    for (int j = 0; j < size / 0x1000; j++){
+        ((char*) addr)[j * 0x1000] = 1;
+    }
 
     end = std::chrono::system_clock::now();
     std::chrono::duration<double> elapsed_seconds = end - start;

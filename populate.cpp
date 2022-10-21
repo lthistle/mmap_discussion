@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string.h>
 #include <sys/mman.h>
+#include <sys/stat.h>
 
 int main(int argc, char** argv){
     std::chrono::time_point<std::chrono::system_clock> start, end;
@@ -21,6 +22,9 @@ int main(int argc, char** argv){
     // read / write / mmap
 
     int fd = open("data", O_RDWR);
+    struct stat buf;
+    fstat(fd, &buf);
+    off_t size = buf.st_size;
 
     void* addr;
 
@@ -28,7 +32,7 @@ int main(int argc, char** argv){
     if (argc == 1){
         // do demand paging if no additional args
         printf("Demand paging\n");
-        addr = 0; // TODO
+        addr = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
     }
     else{
         // load all at once if additional args
@@ -50,6 +54,10 @@ int main(int argc, char** argv){
     std::time_t end_time = std::chrono::system_clock::to_time_t(end);
 
     std::cout << "finished computation at " << std::ctime(&end_time) << "elapsed time: " << elapsed_seconds.count() << "s\n";
+    
+    char* data = (char*) addr;
+    printf("data: %s\n", data);
+
     munmap(addr, 1);
 }
 

@@ -5,6 +5,8 @@
 #include <string.h>
 #include <sys/mman.h>
 
+#define LARGE 400000000
+#define MAP_HUGE_2MB    (21 << MAP_HUGE_SHIFT)
 
 int main(int argc, char** argv){
     std::chrono::time_point<std::chrono::system_clock> start, end;
@@ -21,7 +23,7 @@ int main(int argc, char** argv){
     if (argc == 1){
         // use 4k page size if no additional args
         std::cout << "Page size: 4k\n";
-        addr = 0; // TODO
+        addr = mmap(NULL, LARGE, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
     }
     else{
         // use 2MB page size if additional args
@@ -36,7 +38,7 @@ int main(int argc, char** argv){
         // If you want to learn more about this special setup, check out 
         // https://docs.kernel.org/admin-guide/mm/hugetlbpage.html
         std::cout << "Page size: 2MB\n";
-        addr = 0; // TODO 
+        addr = mmap(NULL, LARGE, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS | MAP_HUGE_2MB, -1, 0);
     }
 
     // Always check your return values!
